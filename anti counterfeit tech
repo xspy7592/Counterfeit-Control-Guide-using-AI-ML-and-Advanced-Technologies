@@ -1,0 +1,74 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
+
+# Step 1: Load the dataset
+# Assume you have a CSV file named 'counterfeit_data.csv' with features and labels
+data = pd.read_csv('counterfeit_data.csv')
+
+# Display the first few rows of the dataset
+print("Original Dataset:")
+print(data.head())
+
+# Step 2: Data Preprocessing
+# Assume 'label' is the target variable, and other columns are features
+X = data.drop('label', axis=1)  # Features
+y = data['label']  # Labels (0 for authentic, 1 for counterfeit)
+
+# Handle missing values (replace NaN values with the mean of each column)
+imputer = SimpleImputer(strategy='mean')
+X = imputer.fit_transform(X)
+
+# Standardize features to have mean=0 and variance=1
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 3: Model Training
+# Initialize the RandomForestClassifier
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+
+# Train the model
+model.fit(X_train, y_train)
+
+
+
+
+
+  Explanation:
+
+1. Data Loading:
+   - The dataset is loaded using `pd.read_csv('counterfeit_data.csv')`. Replace 'counterfeit_data.csv' with the actual path to your dataset.
+
+2. Data Preprocessing:
+   - Missing values are handled using `SimpleImputer(strategy='mean')`. Other strategies are available depending on your dataset.
+   - Features are standardized using `StandardScaler()` to have a mean of 0 and a variance of 1.
+   - The dataset is split into training and testing sets using `train_test_split()`.
+
+3. Model Training:
+   - A RandomForestClassifier with 100 trees is initialized and trained on the training set.
+
+4. Model Evaluation:
+   - The trained model is used to make predictions on the test set.
+   - Accuracy and a classification report (precision, recall, F1-score) are calculated and printed.
+
+This example provides a foundation for developing a counterfeit detection model. Depending on your specific dataset and requirements, you may need to explore more advanced preprocessing techniques, feature engineering, and model architectures.
+
+
+# Step 4: Model Evaluation
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+
+# Display classification report
+print('Classification Report:')
+print(classification_report(y_test, y_pred))
